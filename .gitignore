@@ -1,0 +1,13 @@
+
+# generated files
+lab2/treepath
+
+
+# idea project files
+.idea/
+.ipynb_checkpoints/
+.mypy_cache/
+
+*.docx
+*.pdf
+*.html
