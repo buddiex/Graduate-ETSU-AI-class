@@ -33,7 +33,7 @@ def main():
 main()
 --------------------------------------------------------------------
 GraphWin objects support coordinate transformation through the
-setCoords method and mouse and keyboard interaction methods.
+set_coords method and mouse and keyboard interaction methods.
 
 The library provides the following graphical objects:
     Point
@@ -72,8 +72,8 @@ __version__ = "5.0"
 # Version 4.3 4/25/2014
 #     * Fixed Image getPixel to work with Python 3.4, TK 8.6 (tuple type handling)
 #     * Added interactive keyboard input (getKey and checkKey) to GraphWin
-#     * Modified setCoords to cause redraw of current objects, thus
-#       changing the view. This supports scrolling around via setCoords.
+#     * Modified set_coords to cause redraw of current objects, thus
+#       changing the view. This supports scrolling around via set_coords.
 #
 # Version 4.2 5/26/2011
 #     * Modified Image to allow multiple undraws like other GraphicsObjects
@@ -81,7 +81,7 @@ __version__ = "5.0"
 #     * Merged Pixmap and Image class. Old Pixmap removed, use Image.
 # Version 4.0.1 10/08/2009
 #     * Modified the autoflush on GraphWin to default to True
-#     * Autoflush check on close, setBackground
+#     * Autoflush check on close, set_background
 #     * Fixed getMouse to flush pending clicks at entry
 # Version 4.0 08/2009
 #     * Reverted to non-threaded version. The advantages (robustness,
@@ -146,7 +146,7 @@ __version__ = "5.0"
 # Version 1.6
 #     Fixed Entry so StringVar uses _root as master, solves weird
 #            interaction with shell in Idle
-#     Fixed bug in setCoords. X and Y coordinates can increase in
+#     Fixed bug in set_coords. X and Y coordinates can increase in
 #           "non-intuitive" direction.
 #     Tweaked wm_protocol so window is not resizable and kill box closes.
 
