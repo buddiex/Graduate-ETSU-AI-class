@@ -233,7 +233,7 @@ def get_parameters_grid():
 
 
 # def main():
-filename = sys.argv[1]  # TODO: Change to the filename if you do not want to enter this on the command line
+filename = sys.argv[1]
 param_results = []
 params = [[100, 10, 0.05], [100, 11, 0.1]]
 params.extend(get_parameters_grid())
