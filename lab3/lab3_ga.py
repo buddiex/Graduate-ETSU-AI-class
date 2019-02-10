@@ -4,7 +4,6 @@ import random
 import sys
 
 import numpy as np
-import pandas as pd
 from matplotlib import pyplot as plot
 
 plot.ion()
@@ -220,7 +219,7 @@ DISPLAY_RATE = 100  # Show a graph at this rate
 GENERATION_RANGE = 100, 200
 POPULATION_SIZE_RANGE = 100, 200
 MUTATION_RATE_RANGE = 0.01, 0.1
-NUM_ITERATIONS = 100
+NUM_ITERATIONS = 1
 
 
 def get_parameters_grid():
@@ -240,14 +239,16 @@ params.extend(get_parameters_grid())
 for args in params:
     gs = GeneticSearch(filename, *args)
     gs.run()
+    args.append(sorted(gs.values)[0])
     # gs.show_result()
-    param_results.extend([args, sorted(gs.values)[0]])
+    param_results.append(args)
+
 plot.close()
 
 for i in sorted(param_results, key=lambda x: x[1], reverse=True):
     print(i)
 
-df = pd.DataFrame(param_results, columns=[ 'generation', 'population', 'mutation_rate', 'fitness'])
+# df = pd.DataFrame(param_results, columns=[ 'generation', 'population', 'mutation_rate', 'fitness'])
 # df.plot.bar(x=)
 
 
