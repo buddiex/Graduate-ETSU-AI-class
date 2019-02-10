@@ -4,13 +4,11 @@ import random
 import sys
 
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plot
 
 plot.ion()
 plot.figure(figsize=(9, 5))
-
-CLUSTERS = 4  # Clusters to attempt
-DISPLAY_RATE = 100  # Show a graph at this rate
 
 
 class GeneticSearch:
@@ -59,7 +57,7 @@ class GeneticSearch:
         distances = 0
 
         for pt in c_points:
-                distances += (np.linalg.norm(pt - center) ** 2)
+            distances += (np.linalg.norm(pt - center) ** 2)
 
         return distances
 
@@ -179,16 +177,10 @@ class GeneticSearch:
         generations = 1
 
         while generations <= self.generations:
-            new_population = []
-            parent1 = []
-            parent2 = []
 
             retain = math.ceil(self.population_size * 0.05)
             new_population = self.population[:retain]
             while len(new_population) < self.population_size:
-
-                parent1 = []
-
                 parent1 = random.choice(self.population)[0]
                 parent2 = random.choice(self.population)[0]
 
@@ -200,9 +192,9 @@ class GeneticSearch:
                 child1 = children[0]
                 child2 = children[1]
 
-                if (random.random() < self.mutation_rate):
+                if random.random() < self.mutation_rate:
                     child1 = self.mutate(child1)
-                if (random.random() < self.mutation_rate):
+                if random.random() < self.mutation_rate:
                     child2 = self.mutate(child2)
 
                 fitness1 = self.fitnessfcn(child1)
@@ -218,20 +210,45 @@ class GeneticSearch:
 
             self.values.append(self.population[0][1])
 
-            if generations % DISPLAY_RATE == 0:
-                print("Generation", generations, "Fitness", -self.population[0][1])
-                self.show_step(generations, -self.population[0][1])
+            # if generations % DISPLAY_RATE == 0:
+            #     print("Generation", generations, "Fitness", -self.population[0][1])
+            #     self.show_step(generations, -self.population[0][1])
 
 
-def main():
-    filename = sys.argv[1]  # TODO: Change to the filename if you do not want to enter this on the command line
+CLUSTERS = 4  # Clusters to attempt
+DISPLAY_RATE = 100  # Show a graph at this rate
+GENERATION_RANGE = 100, 200
+POPULATION_SIZE_RANGE = 100, 200
+MUTATION_RATE_RANGE = 0.01, 0.1
+NUM_ITERATIONS = 100
 
-    gs = GeneticSearch(filename, 100, 10, 0.05)
+
+def get_parameters_grid():
+    args = [
+            [random.randint(*GENERATION_RANGE) for _ in range(NUM_ITERATIONS)],
+            [random.randint(*POPULATION_SIZE_RANGE) for _ in range(NUM_ITERATIONS)],
+            [round(random.uniform(*MUTATION_RATE_RANGE), 2) for _ in range(NUM_ITERATIONS)]
+            ]
+    return list(map(list, zip(*args)))
+
+
+# def main():
+filename = sys.argv[1]  # TODO: Change to the filename if you do not want to enter this on the command line
+param_results = []
+params = [[100, 10, 0.05], [100, 11, 0.1]]
+params.extend(get_parameters_grid())
+for args in params:
+    gs = GeneticSearch(filename, *args)
     gs.run()
-    gs.show_result()
+    # gs.show_result()
+    param_results.extend([args, sorted(gs.values)[0]])
+plot.close()
 
-    input("Press Enter to exit...")
-    plot.close()
+for i in sorted(param_results, key=lambda x: x[1], reverse=True):
+    print(i)
+
+df = pd.DataFrame(param_results, columns=[ 'generation', 'population', 'mutation_rate', 'fitness'])
+# df.plot.bar(x=)
 
 
-main()
+# main()

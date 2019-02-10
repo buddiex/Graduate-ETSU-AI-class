@@ -179,6 +179,7 @@ class Solver:
 
         came_from[str(board)] = None  # Push the initial state and set it's parent as None
         cost_so_far[str(board)] = 0  # The cost so far from the initial state is 0.
+        max_nodes_explored = 0
 
         while frontier:
             current_item = frontier.get()
@@ -186,12 +187,12 @@ class Solver:
                 break
             for num_swaps, neigbor in enumerate(self.get_neighbors(current_item)):
                 str_neigbor = str(neigbor)
-                str_current_item = str(current_item)
                 path_cost = cost_so_far[str(current_item)] + 1
                 if str_neigbor not in cost_so_far or path_cost < cost_so_far[str_neigbor]:
                     cost_so_far[str_neigbor] = path_cost
                     frontier.put(neigbor, path_cost+ getattr(self, heuristic_type)(neigbor))
                     came_from[str_neigbor] = current_item
+                    max_nodes_explored = max(max_nodes_explored, len(frontier.queue))
 
         node = self.solution
 
@@ -206,18 +207,23 @@ class Solver:
         # -- Reverse the solution so you move forward
         solution.reverse()
 
-        for state in solution:
-            print(self.board.to_s(state), "\n")
+        # for state in solution: print(self.board.to_s(state), "\n")
 
         print("\nTotal Moves:", str(len(solution) - 1))
+        print("nodes explored {}, {} distance from initial state:{} to goal state:{} is {} ".format(max_nodes_explored,heuristic_type,board, self.solution,getattr(self, heuristic_type)(board)))
+
 
 
 # =====================
 # Main Algorithm
 
-tester1 = [8, 1, 3, 4, 0, 2, 7, 6, 5]
-tester2 = [1, 8, 0, 4, 3, 2, 5, 7, 6]
-board = Board(tester1)
-solver = Solver(board)
-solver.astar_search("hamming")
-solver.astar_search("manhattan")
+tester1 = [[8, 1, 3, 4, 0, 2, 7, 6, 5], [1, 8, 0, 4, 3, 2, 5, 7, 6], None]
+# tester1 = [ [0,1, 2, 3, 4, 5, 6, 8, 7]]
+tester1 = [ None]
+# tester2 = [1, 8, 0, 4, 3, 2, 5, 7, 6]
+for n, test in enumerate(tester1):
+    print("{indent} running for {data} {indent}".format(indent="*"*10, data=test))
+    board = Board(test)
+    solver = Solver(board)
+    solver.astar_search("hamming")
+    solver.astar_search("manhattan")
