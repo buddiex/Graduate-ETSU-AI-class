@@ -221,7 +221,7 @@ class Field:
                 break
             for neigbor in self.get_neighbors(current_item):
                 str_neigbor = str(neigbor)
-                path_cost = cost_so_far[str(current_item)] + 1
+                path_cost = cost_so_far[str(current_item)] + self.straight_line_distance(neigbor, current_item)
                 if str_neigbor not in cost_so_far or path_cost < cost_so_far[str_neigbor]:
                     cost_so_far[str_neigbor] = path_cost
                     frontier.put(neigbor, path_cost + self.straight_line_distance(neigbor, self.end))

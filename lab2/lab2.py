@@ -14,7 +14,7 @@ import numpy
 #  You may need to alter this based on
 #   your file location and OS.
 path = "treepath"
-BASE_PATH = r"C:\\Users\\OMIGIEO\\Google Drive\\etsu\\weekend course\\algo\\ai\\treepath"
+BASE_PATH = r"C:\Users\OMIGIEO\Google Drive\etsu\weekend course\algo\ai\treepath"
 # ---------------------------------------
 # The Goal Filename
 #  This is the name of the files you are
@@ -33,7 +33,6 @@ def method_timing(func):
         t2 = time.time()
         # print ('%s took %0.3f ms' % (func, (t2-t1)*1000.0))
         return [res, (t2 - t1) * 1000.0]
-
     return wrapper
 
 
@@ -110,7 +109,7 @@ def search(path, goal, search_type = 'BFS'):
 #  Completing the code above will allow this code to run. Comment or uncomment
 #   as necessary, but the final submission should be appear as the original.
 
-# goal = "YAjrbqc.bin"
+goal = "YAjrbqc.bin"
 goal = "xhtj8.bin"
 goal = "XUB.bin"
 

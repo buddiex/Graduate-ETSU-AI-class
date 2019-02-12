@@ -215,40 +215,41 @@ class GeneticSearch:
             #     self.show_step(generations, -self.population[0][1])
 
 
-CLUSTERS = 4  # Clusters to attempt
-DISPLAY_RATE = 100  # Show a graph at this rate
-GENERATION_RANGE = 100, 200
-POPULATION_SIZE_RANGE = 100, 200
-MUTATION_RATE_RANGE = 0.01, 0.1
-NUM_ITERATIONS = 100
+CLUSTERS = 3  # Clusters to attempt
+DISPLAY_RATE = 10  # Show a graph at this rate
+GENERATION_RANGE = 500, 700
+POPULATION_SIZE_RANGE = 10, 15
+MUTATION_RATE_RANGE = 0.1, 0.6
+NUM_ITERATIONS = 10
 
 
 def get_parameters_grid():
     args = [
-            [random.randint(*GENERATION_RANGE) for _ in range(NUM_ITERATIONS)],
-            [random.randint(*POPULATION_SIZE_RANGE) for _ in range(NUM_ITERATIONS)],
-            [round(random.uniform(*MUTATION_RATE_RANGE), 2) for _ in range(NUM_ITERATIONS)]
+                [random.randint(*GENERATION_RANGE) for _ in range(NUM_ITERATIONS)],
+                [random.randint(*POPULATION_SIZE_RANGE) for _ in range(NUM_ITERATIONS)],
+                [round(random.uniform(*MUTATION_RATE_RANGE), 2) for _ in range(NUM_ITERATIONS)]
             ]
     return list(map(list, zip(*args)))
 
 
-# def main():
-filename = sys.argv[1]
-param_results = []
-params = [[100, 10, 0.05], [100, 11, 0.1]]
-params.extend(get_parameters_grid())
-for args in params:
-    gs = GeneticSearch(filename, *args)
-    gs.run()
-    # gs.show_result()
-    param_results.extend([args, sorted(gs.values)[0]])
-plot.close()
+def main():
+    filename = sys.argv[1]
+    param_results = []
+    params = []
+    params.extend(get_parameters_grid())
 
-for i in sorted(param_results, key=lambda x: x[1], reverse=True):
-    print(i)
+    # params = [[100, 10, 0.05], [100, 11, 0.1]]
+    params = [[660, 15, 0.60]]
+    for args in params:
+        gs = GeneticSearch(filename, *args)
+        gs.run()
+        gs.show_result()
+        args.append(sorted(gs.values, reverse=True)[0])
+        param_results.append(args)
+        df = pd.DataFrame(param_results, columns=['generation', 'population', 'mutation_rate', 'fitness'])
+        print(df.sort_values('fitness', ascending=False), end="\r")
+    plot.close()
 
-df = pd.DataFrame(param_results, columns=[ 'generation', 'population', 'mutation_rate', 'fitness'])
-# df.plot.bar(x=)
 
 
-# main()
+main()
