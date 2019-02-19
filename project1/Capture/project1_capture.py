@@ -198,9 +198,9 @@ class Field:
         """
             Returns the straight-line distance between point 1 and point 2
         """
-        return sqrt((point1.x - point2.x) ** 2 + (point1.x - point2.x) ** 2)
+        # return sqrt((point1.x - point2.x) ** 2 + (point1.x - point2.x) ** 2)
 
-        # return sqrt((point1.x - point1.y) ** 2 + (point2.x - point2.y) ** 2)
+        return sqrt((point1.x - point1.y) ** 2 + (point2.x - point2.y) ** 2)
 
     def astar_search(self):
         """
