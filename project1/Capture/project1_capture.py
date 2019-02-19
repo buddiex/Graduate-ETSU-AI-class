@@ -200,6 +200,8 @@ class Field:
         """
         return sqrt((point1.x - point2.x) ** 2 + (point1.x - point2.x) ** 2)
 
+        # return sqrt((point1.x - point1.y) ** 2 + (point2.x - point2.y) ** 2)
+
     def astar_search(self):
         """
         Create the A* Search Here Use the Backtrack method to draw the final path when your

@@ -1,7 +1,6 @@
 import math
 import operator
 import random
-import sys
 
 import numpy as np
 import pandas as pd
@@ -233,13 +232,14 @@ def get_parameters_grid():
 
 
 def main():
-    filename = sys.argv[1]
+    #filename = sys.argv[1]
+    filename = "points.csv"
     param_results = []
     params = []
     params.extend(get_parameters_grid())
 
     # params = [[100, 10, 0.05], [100, 11, 0.1]]
-    params = [[660, 15, 0.60]]
+    # params = [[660, 15, 0.60]]
     for args in params:
         gs = GeneticSearch(filename, *args)
         gs.run()
