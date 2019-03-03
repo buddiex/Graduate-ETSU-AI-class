@@ -13,3 +13,4 @@ lab2/treepath
 *.html
 *.rar
 project1/Capture/__pycache__/
+.spyproject/

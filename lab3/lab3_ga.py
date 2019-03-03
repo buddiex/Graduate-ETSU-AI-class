@@ -16,10 +16,10 @@ class GeneticSearch:
     """
 
     def __init__(self, filename, generations, population_size, mutation_rate):
-        '''
+        """
             Initialize the GA by reading the points from the file and setting
              standard GA parameters.
-        '''
+        """
         self.filename = filename
         self.read_file()
         self.population = None
@@ -30,15 +30,15 @@ class GeneticSearch:
         self.values = []
 
     def read_file(self):
-        '''
+        """
             Read points from the passed file in the format x,y
-        '''
+        """
         self.points = np.genfromtxt(self.filename, delimiter=',')
 
     def initialize_population(self):
-        '''
+        """
             Create the initial population and find the fitness for each individual.
-        '''
+        """
         self.population = []
 
         for _ in range(self.population_size):
@@ -49,10 +49,10 @@ class GeneticSearch:
         self.population.sort(key=operator.itemgetter(1), reverse=True)
 
     def sum_squared_distances(self, c_points, center):
-        '''
+        """
             Calculates the distance from each point in c_points to the center,
              squares it, and adds all of them together.
-        '''
+        """
         distances = 0
 
         for pt in c_points:
@@ -61,10 +61,10 @@ class GeneticSearch:
         return distances
 
     def get_clusters_and_centers(self, individual):
-        '''
+        """
             Using individual, it returns a dictionary of indexes for points in
             each cluster, a list of points in each cluster, and centers for each cluster.
-        '''
+        """
         clusters = {}
         c_points = {}
         centers = {}
@@ -78,11 +78,11 @@ class GeneticSearch:
         return clusters, c_points, centers
 
     def fitnessfcn(self, individual):
-        '''
+        """
             The fitness function for the individual is the total sum of squared distances for all clusters.
             The lowest value represents the best solution, so this is negated
             to represent "maximum utility" idea of Genetic Algorithms
-        '''
+        """
         clusters, c_points, centers = self.get_clusters_and_centers(individual)
         sse = {}
         c_vals = set(individual)
@@ -95,16 +95,16 @@ class GeneticSearch:
         return -sum(list(sse.values()))
 
     def reproduce(self, parent1, parent2):
-        '''
+        """
             Reproduce using parent1 and parent2 and a crossover
              strategy.
-        '''
+        """
         crossover1 = random.randrange(0, self.chromosome_size)
 
-        ''' Single point crossover:
+        """ Single point crossover:
               Pull bits 0..crossover1 from parentX.
               Pull remaining bits from parentY in the order they appear.
-        '''
+        """
         child1 = parent2[:crossover1] + parent1[crossover1:]
         child2 = parent1[:crossover1] + parent2[crossover1:]
 
@@ -113,10 +113,10 @@ class GeneticSearch:
         return value
 
     def mutate(self, child):
-        '''
+        """
             Mutation Strategy: Assign three random points to their closest
              cluster center
-        '''
+        """
         clusters, c_points, centers = self.get_clusters_and_centers(child)
         distance1 = {}
         distance2 = {}
@@ -138,9 +138,9 @@ class GeneticSearch:
         return child
 
     def show_step(self, generation, fitness):
-        '''
+        """
             Plots an intermediate step for the current generation
-        '''
+        """
         plot.suptitle("Clustering with Genetic Algorithms - Generation " + str(generation) + \
                       "\nFitness: " + str(fitness))
         best = self.population[0]
@@ -150,9 +150,9 @@ class GeneticSearch:
         plot.pause(1)
 
     def show_result(self):
-        '''
+        """
             Display the final result and the fitness over time
-        '''
+        """
         plot.suptitle("Clustering with Genetic Algorithms - Generation " + str(self.generations) + \
                       "\nFitness: " + str(-self.population[0][1]))
         best = self.population[0]
@@ -167,16 +167,16 @@ class GeneticSearch:
         plot.pause(1)
 
     def run(self):
-        '''
+        """
             Run the genetic algorithm. Note that this method initializes the
              first population.
-        '''
+        """
         self.initialize_population()
 
         generations = 1
 
         while generations <= self.generations:
-
+            # https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)
             retain = math.ceil(self.population_size * 0.05)
             new_population = self.population[:retain]
             while len(new_population) < self.population_size:
@@ -232,7 +232,6 @@ def get_parameters_grid():
 
 
 def main():
-    #filename = sys.argv[1]
     filename = "points.csv"
     param_results = []
     params = []
