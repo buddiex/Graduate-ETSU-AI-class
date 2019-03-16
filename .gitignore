@@ -2,7 +2,6 @@
 # generated files
 lab2/treepath
 
-
 # idea project files
 .idea/
 .ipynb_checkpoints/
@@ -14,3 +13,4 @@ lab2/treepath
 *.rar
 project1/Capture/__pycache__/
 .spyproject/
+*.zip
