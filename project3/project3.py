@@ -1,4 +1,5 @@
 import sys
+import time
 
 
 class Sudoku:
@@ -67,16 +68,19 @@ class Sudoku:
     def solve(self):
         self.init_values()
         # self.search(self.propagate())
-        # self.solve_FC()
+        # val = self.solve_FC()
         val = self.solve_bt_fc(self.values)
-        if val:
-            for k, v in val.items():
-                self.grid[k] = v
+        # val = self.solve_mrv(self.values)
+        self.copy_to_grid(val)
+
+    def copy_to_grid(self, val):
+        for k, v in val.items():
+            self.grid[k] = v
 
     def solve_FC(self):
-        """
-            Solve the problem by propagation and backtracking.
-        """
+
+        # if self.is_solved(values):
+        #     return values
 
         for k in self.grid:
             if self.forward_check(self.values):
@@ -85,11 +89,23 @@ class Sudoku:
             if self.grid[k] in '0.':
                 self.grid[k] = self.values[k][0]
                 self.propagate(k, self.values[k][0], self.values)
-                # self.update_grid()
-            # print(self)
 
-    def solve_mrv(self):
-        pass
+    def solve_mrv(self, values):
+        if self.forward_check(values):
+            return False
+
+        if self.is_solved(values):
+            return values
+
+        cell, domain = self.get_min_remaining_vall_cell(values)
+        if len(domain) > 1:
+            for variable in domain:
+                # passing a copy of values into the next call ensures that the state of current values
+                # remains intact. hence no need for explicitly un propagating
+                solved = self.solve_bt_fc(self.propagate(cell, variable, values.copy()))
+                if solved:
+                    return solved
+            return False
 
     def solve_bt_fc(self, values):
         if self.forward_check(values):
@@ -101,11 +117,13 @@ class Sudoku:
         for cell, domain in values.items():
             if len(domain) > 1:
                 for variable in domain:
-                    values_new = self.propagate(cell, variable, values.copy())
-                    solved = self.solve_bt_fc(values_new)
+                    solved = self.solve_bt_fc(self.propagate(cell, variable, values.copy()))
                     if solved:
                         return solved
                 return False
+
+    def get_min_remaining_vall_cell(self, values):
+        return min([(k, v) for k, v in values.items() if len(v) > 1], key=lambda x: len(x[1]))
 
     @staticmethod
     def forward_check(values):
@@ -128,17 +146,28 @@ class Sudoku:
                     return False
         return True
 
-    def update_grid(self):
-        for k in self.grid:
-            if self.grid[k] in '0.':
-                if len(self.values[k]) == 1:
-                    self.grid[k] = self.values[k]
-
     def propagate(self, cell, value, values):
         """
             TODO: Code the Constraint Propagation Technique Here
         """
         values[cell] = value
+        values = self.__propagate(cell, value, values)
+
+        # looping through all single constraints as a result of propagate
+        # and propagating till there is no new single values been created
+        while True:
+            already_solved = [c for c in values if len(values[c]) == 1]
+            for c, value in values.items():
+                if len(value) == 1:
+                    values = self.__propagate(c, value, values)
+            just_solved = [c for c in values if len(values[c]) == 1]
+
+            if already_solved == just_solved:
+                break
+
+        return values
+
+    def __propagate(self, cell, value, values):
         for peer in self.peers[cell]:
             values[peer] = values[peer].replace(value, '')
         return values
@@ -155,23 +184,26 @@ class Sudoku:
             if value not in '0.':
                 self.values = self.propagate(cell, value, self.values)
 
-
 def main():
-    s = Sudoku()
     '''
         The loop reads in as many files as you've passed on the command line.
         Example to read two easy files from the command line:
             python project3.py sudoku_easy1.txt sudoku_easy2.txt
     '''
     for x in range(1, len(sys.argv)):
-        s.load_file(sys.argv[x])
+        file = sys.argv[x]
+        s = Sudoku()
+        s.load_file(file)
         print("\n==============================================")
         print(sys.argv[x].center(46))
         print("==============================================\n")
         print(s)
         print("\n----------------------------------------------\n")
+        start = time.time()
         s.solve()
-        print(s)
+        t = time.time()- start
+        print('(%.2f seconds)\n' % t)
 
+        print(s)
 
 main()
