@@ -67,47 +67,34 @@ class Sudoku:
 
     def solve(self):
         self.init_values()
-        # self.search(self.propagate())
-        # val = self.solve_FC()
-        val = self.solve_bt_fc(self.values)
-        # val = self.solve_mrv(self.values)
-        self.copy_to_grid(val)
+        ###############################################
+        # uncomment each line to run the right search
+        ################################################
+        # result = self.search_FC(self.propagate(self.values))
+        # result = self.search_BT_FC(self.propagate(self.values))
+        result = self.search_MRV(self.propagate(self.values))
+        if result:
+            self.copy_to_grid(result)
+        else:
+            print('could not solve')
 
     def copy_to_grid(self, val):
         for k, v in val.items():
             self.grid[k] = v
 
-    def solve_FC(self):
-
-        # if self.is_solved(values):
-        #     return values
-
-        for k in self.grid:
-            if self.forward_check(self.values):
-                print("not solvable")
-                return False
-            if self.grid[k] in '0.':
-                self.grid[k] = self.values[k][0]
-                self.propagate(k, self.values[k][0], self.values)
-
-    def solve_mrv(self, values):
-        if self.forward_check(values):
-            return False
+    def search_FC(self, values):
 
         if self.is_solved(values):
             return values
 
-        cell, domain = self.get_min_remaining_vall_cell(values)
-        if len(domain) > 1:
-            for variable in domain:
-                # passing a copy of values into the next call ensures that the state of current values
-                # remains intact. hence no need for explicitly un propagating
-                solved = self.solve_bt_fc(self.propagate(cell, variable, values.copy()))
-                if solved:
-                    return solved
-            return False
+        for cell, domain in values.items():
+            if len(domain) > 1:
+                for variable in domain:
+                    values[cell] = variable
+                    self.search_FC(self.propagate(values))
 
-    def solve_bt_fc(self, values):
+    def search_BT_FC(self, values):
+        """" solving with backtracking based on forward checking"""
         if self.forward_check(values):
             return False
 
@@ -117,12 +104,35 @@ class Sudoku:
         for cell, domain in values.items():
             if len(domain) > 1:
                 for variable in domain:
-                    solved = self.solve_bt_fc(self.propagate(cell, variable, values.copy()))
+                    # passing a copy of values into the next call ensures that the state of current values
+                    # remains intact. hence no need for explicitly un propagating
+                    values[cell] = variable
+                    solved = self.search_BT_FC(self.propagate(values.copy()))
                     if solved:
                         return solved
                 return False
 
-    def get_min_remaining_vall_cell(self, values):
+    def search_MRV(self, values):
+        """ Using minimum remaining values to pick next cell to fill"""
+
+        if self.forward_check(values):
+            return False
+
+        if self.is_solved(values):
+            return values
+
+        cell, domain = self.get_cell_min_remaining_constraint(values)
+        if len(domain) > 1:
+            for variable in domain:
+                # passing a copy of values into the next call ensures that the state of current values
+                # remains intact. hence no need for explicitly un propagating
+                values[cell] = variable
+                solved = self.search_MRV(self.propagate(values.copy()))
+                if solved:
+                    return solved
+            return False
+
+    def get_cell_min_remaining_constraint(self, values):
         return min([(k, v) for k, v in values.items() if len(v) > 1], key=lambda x: len(x[1]))
 
     @staticmethod
@@ -146,25 +156,21 @@ class Sudoku:
                     return False
         return True
 
-    def propagate(self, cell, value, values):
+    def propagate(self, values):
         """
             TODO: Code the Constraint Propagation Technique Here
         """
-        values[cell] = value
-        values = self.__propagate(cell, value, values)
-
         # looping through all single constraints as a result of propagate
         # and propagating till there is no new single values been created
         while True:
             already_solved = [c for c in values if len(values[c]) == 1]
-            for c, value in values.items():
+            for cell, value in values.items():
                 if len(value) == 1:
-                    values = self.__propagate(c, value, values)
-            just_solved = [c for c in values if len(values[c]) == 1]
+                    values = self.__propagate(cell, value, values)
 
+            just_solved = [c for c in values if len(values[c]) == 1]
             if already_solved == just_solved:
                 break
-
         return values
 
     def __propagate(self, cell, value, values):
@@ -182,7 +188,8 @@ class Sudoku:
     def init_values(self):
         for cell, value in self.grid.items():
             if value not in '0.':
-                self.values = self.propagate(cell, value, self.values)
+                self.values[cell] = value
+
 
 def main():
     '''
@@ -201,9 +208,9 @@ def main():
         print("\n----------------------------------------------\n")
         start = time.time()
         s.solve()
-        t = time.time()- start
+        t = time.time() - start
         print('(%.2f seconds)\n' % t)
-
         print(s)
+
 
 main()
