@@ -14,3 +14,4 @@ lab2/treepath
 project1/Capture/__pycache__/
 .spyproject/
 *.zip
+*climate_tweets.csv
