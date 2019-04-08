@@ -20,7 +20,6 @@ def plotTSP(generation, path, points, path_distance, save, num_iters=1):
     num_iters: number of paths that are in the path list
 
     SOURCE: https://gist.github.com/payoung/6087046
-
     """
     ### MOD: Brian Bennett
 
