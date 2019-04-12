@@ -43,7 +43,6 @@ labels = digits.target
 
 
 def get_info():
-    global index, values, label, val
     for index in range(fit.n_clusters):
         values = indices[int(index)]
         label = [labels[val] for val in values]
